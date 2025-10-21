@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Crop Recommendation</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        input[type="submit"] {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-top: 20px;
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .result {
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f2f2f2;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Crop Recommendation</h1>
+    <form action="/predict" method="POST" id="crop-form">
+        <label for="N">Nitrogen (N):</label>
+        <input type="text" name="N" id="N">
+
+        <label for="P">Phosphorus (P):</label>
+        <input type="text" name="P" id="P">
+
+        <label for="K">Potassium (K):</label>
+        <input type="text" name="K" id="K">
+
+        <label for="temperature">Temperature:</label>
+        <input type="text" name="temperature" id="temperature">
+
+        <label for="humidity">Humidity:</label>
+        <input type="text" name="humidity" id="humidity">
+
+        <label for="ph">pH:</label>
+        <input type="text" name="ph" id="ph">
+
+        <label for="rainfall">Rainfall:</label>
+        <input type="text" name="rainfall" id="rainfall">
+
+        <input type="submit" value="predict">
+    </form>
+   <script>
+    // Function to populate the form fields with data from the last row
+    function populateForm(data) {
+        if (data && data.length > 0) {
+            // Assuming each item in the array is an object with properties N, P, K, temperature, humidity, ph, rainfall, label
+            data.forEach(item => {
+                for (const property in item) {
+                    if (item.hasOwnProperty(property)) {
+                        $('#' + property).val(item[property]);
+                    }
+                }
+            });
+        }
+    }
+
+    // Fetch data from the Google Sheets script
+    $.get('https://script.google.com/macros/s/AKfycbygcVOAwLw3sCYtD1Dz_CFFzPIB22ET5HGxt2Koki4lnnrELa_ztzoNI67l6cQ5ZDtm1A/exec', function(response) {
+        if (response.result2 && response.result2.result === 'success') {
+            populateForm(response.result2.data);
+        } else {
+            alert('Error fetching data from Google Sheets.');
+        }
+    });
+</script>
+
+</body>
+</html>
